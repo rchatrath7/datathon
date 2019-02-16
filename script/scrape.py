@@ -31,9 +31,10 @@ def scrape(query, startdate, enddate):
         time.sleep(0.2)
     
     tweets = browser.find_elements_by_class_name('tweet-text')
+    dates = browser.find_elements_by_class_name('time')
     
 
-    return tweets
+    return tweets, dates
 
 def readTextFile(filePath):
     """
@@ -51,24 +52,25 @@ def readTextFile(filePath):
     list = text_file.readlines()
     return list
 
-def saveTweets(tweets, fileName):
+def saveTweets(tweets, dates, fileName):
     """
         saves scrapped tweets to .txt file
         
         Parameters
         ----------
         tweets      : list of web elements from scrape
+        dates       : dates of each tweet
         fileName    : name file will be written to as a string
         
         """
     output = fileName+".txt"
     with open(output, 'w') as f:
-        for tweet in tweets:
-            f.write(str(tweets.text) +"\n")
+        for i in range(len(dates)):
+            f.write(str(dates[i].text)+ " - "+ tweets[i].text +"\n")
 
 def proto_exec(tweet_args, filepath): 
-    twitter = scrape(*tweet_args) 
-    saveTweets(twitter, filepath) 
+    twitter, dates = scrape(*tweet_args) 
+    saveTweets(twitter, dates, filepath) 
 
 start_year = 2009 
 end_year = 2010 
