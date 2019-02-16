@@ -66,6 +66,24 @@ def saveTweets(tweets, fileName):
         for tweet in tweets:
             f.write(str(tweets.text) +"\n")
 
+def proto_exec(tweet_args, filepath): 
+    twitter = scrape(*tweet_args) 
+    saveTweets(twitter, filepath) 
+
+start_year = 2009 
+end_year = 2010 
+
+threads = [threading.Thread(target=proto_exec, 
+            args=(("Honeywell", "{}-01-01".format(start_year + i), "{}-12-31".format(start_year + i)), "output_{}".format(start_year + i),))
+            for i in range(end_year-start_year+1)
+          ]
+
+for thread in threads: 
+    thread.start() 
+
+for thread in threads: 
+    thread.join() 
+
 ## example for honeywell from 6/1/2018 to 12/31/18
-twitter = scrape("Honeywell", "2009-01-01", "2009-12-31")
-saveTweets(twitter, "output")
+# twitter = scrape("Honeywell", "2009-01-01", "2009-12-31")
+# saveTweets(twitter, "output")
