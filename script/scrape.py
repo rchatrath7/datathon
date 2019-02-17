@@ -1,5 +1,6 @@
 import time
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 import threading 
 
 def scrape(url, text_class_name, date_class_name):
@@ -17,23 +18,43 @@ def scrape(url, text_class_name, date_class_name):
         Tweets as web elemtns
         """
     # browser = webdriver.Chrome()
-    browser = webdriver.Remote("http://127.0.0.1:4444",desired_capabilities=webdriver.DesiredCapabilities.FIREFOX)
+   #  chrome_options = webdriver.ChromeOptions()
+    # chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--no-sandbox')
+    # chrome_options.add_argument('--lang=en')
+   #  chrome_options.add_argument('CHROME')
+    browser = webdriver.Remote(desired_capabilities=webdriver.DesiredCapabilities.CHROME)
     
-    # browser.get(url)
-    # body = browser.find_element_by_tag_name('body')
-    
-    # while True: 
-        # try: 
-            # body.send_keys(Keys.PAGE_DOWN)
-            # time.sleep(0.2)
-        # except KeyboardInterrupt: 
-            # break 
+    browser.get(url)
+    body = browser.find_element_by_tag_name('body')
 
-    # tweets = browser.find_elements_by_class_name(text_class_name)
-    # dates = browser.find_elements_by_class_name(date_class_name)
+    # for _ in range(100): 
+        # body.send_keys(Keys.PAGE_DOWN) 
+        # time.sleep(0.2)
+    
+    while True: 
+        try: 
+            body.send_keys(Keys.PAGE_DOWN)
+            time.sleep(0.2)
+        except KeyboardInterrupt: 
+            t = browser.find_elements_by_class_name(text_class_name)[-1] 
+            for _ in range(100): 
+                body.send_keys(Keys.PAGE_DOWN)
+                time.sleep(0.2)
+            b = browser.find_elements_by_class_name(text_class_name)[-1] 
+            print (t, b) 
+            if t == b: 
+                print "Breaking!" 
+                break 
+            else: 
+                print "No break!"
+
+
+    tweets = browser.find_elements_by_class_name(text_class_name)
+    dates = browser.find_elements_by_class_name(date_class_name)
     
 
-    # return tweets, dates
+    return tweets, dates
 
 def readTextFile(filePath):
     """
@@ -65,7 +86,7 @@ def saveTweets(tweets, dates, fileName):
     output = fileName+".txt"
     with open(output, 'w') as f:
         for i in range(len(dates)):
-            f.write(str(dates[i].text)+ " - "+ tweets[i].text +"\n")
+            f.write(dates[i].text.encode('utf-8')+ " - "+ tweets[i].text.encode('utf-8') +"\n")
 
 def construct_url(query, twitter=True, startdate=None, enddate=None): 
     if twitter: 
@@ -99,8 +120,8 @@ twitter_args = (
 
 stocktwit_args = (
     stocktwit_args, 
-    "stocktwit_output", 
-    "HON",
+    "stocktwit_output_syf", 
+    "SYF",
     False, 
     None, 
     None 
