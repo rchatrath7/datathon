@@ -37,18 +37,27 @@ def scrape(url, text_class_name, date_class_name):
             body.send_keys(Keys.PAGE_DOWN)
             time.sleep(0.2)
         except KeyboardInterrupt: 
-            t = browser.find_elements_by_class_name(text_class_name)[-1] 
-            for _ in range(100): 
-                body.send_keys(Keys.PAGE_DOWN)
-                time.sleep(0.2)
-            b = browser.find_elements_by_class_name(text_class_name)[-1] 
-            print (t, b) 
-            if t == b: 
-                print "Breaking!" 
-                break 
+            resp = input("Continue? [y]\\c\\n\n")
+            if resp == "y": 
+                continue 
+            elif resp == "c":
+                try: 
+                    t = browser.find_elements_by_class_name(text_class_name)[-1] 
+                    for _ in range(100): 
+                        body.send_keys(Keys.PAGE_DOWN)
+                        time.sleep(0.2)
+                    b = browser.find_elements_by_class_name(text_class_name)[-1] 
+                    print (t, b) 
+                    if t == b: 
+                        print("Breaking!")  
+                        break 
+                    else: 
+                        print("No break!")
+                except Exception: 
+                    print("Exception") 
+                    break 
             else: 
-                print "No break!"
-
+                break 
 
     tweets = browser.find_elements_by_class_name(text_class_name)
     dates = browser.find_elements_by_class_name(date_class_name)
@@ -86,7 +95,7 @@ def saveTweets(tweets, dates, fileName):
     output = fileName+".txt"
     with open(output, 'w') as f:
         for i in range(len(dates)):
-            f.write(dates[i].text.encode('utf-8')+ " - "+ tweets[i].text.encode('utf-8') +"\n")
+            f.write(str(dates[i].text) + " - " + str(tweets[i].text) +"\n")
 
 def construct_url(query, twitter=True, startdate=None, enddate=None): 
     if twitter: 
@@ -120,8 +129,8 @@ twitter_args = (
 
 stocktwit_args = (
     stocktwit_args, 
-    "stocktwit_output_syf", 
-    "SYF",
+    "stocktwit_output_mmm", 
+    "MMM",
     False, 
     None, 
     None 
